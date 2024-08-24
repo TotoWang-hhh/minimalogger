@@ -1,6 +1,8 @@
 # 📜 Minimalogger
 A light logging module for Python softwares.
 
+**2024 By rgzz666** | version: v0.1.1
+
 ## ✨ Features
 ### Formatting
 Each message are automatically formatted when logged. Time, tracing info and type will be automatically added to your logs.
