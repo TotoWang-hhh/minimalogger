@@ -53,3 +53,6 @@ As I mentioned before, warning, error, and critical logs will trigger the given 
 These options are for showing your errors in UI, maybe in a popup or notification. You can simply modify the binded function by changing the value of `log.ON_XXX_LOGGED` varriables. Function stored in the varriables should require one or additional arguments to run. This is because the logging module will give your log message to the function by the first argument.
 
 For example, if I want to use tkinter.messagebox to show errors in my program, I should do: `log.ON_ERROR_LOGGED = lambda message: tkinter.messagebox.showerror("Error", message)`.
+
+## 🧪 Testing
+Hey! Are you running this module directly? This should trigger the things under `if __name__ == "__main__":`, which is for testing purposes. These code will test every single function of this module, but may produce addtional files you may don't need. The `_test_log()` function is also a part of the testing function. You should not use `_test_log()` in your own code.
