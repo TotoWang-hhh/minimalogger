@@ -119,7 +119,7 @@ ON_ERROR_LOGGED=lambda log: None
 ON_WARNING_LOGGED=lambda log: None
 ON_CRITICAL_LOGGED=lambda log: None
 
-info(f"Welcome from Minimalog v{_VERSION}")
+info(f"Welcome from Minimalogger v{_VERSION}")
 
 if __name__=="__main__":
     # Use tkinter to show dialogs.
