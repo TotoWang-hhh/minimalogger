@@ -29,8 +29,8 @@ To Cusomize the path of the log files, use `log.init_log_file(file_dir="<Directo
 ### Log Something
 Then you may want to add something to the log. Currently we have 5 types of log available, which are:
 - 🐞 Debug
-- ℹ Info
-- ⚠ Warning
+- ℹ️ Info
+- ⚠️ Warning
 - ❌ Error
 - 🛑 Critical
 
