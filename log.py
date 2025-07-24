@@ -1,21 +1,22 @@
 # Minimalogger
 # 2024 by rgzz666
 # GitHub: github.com/TotoWang-hhh/minimalogger
-_VERSION = "0.1.2"
+_VERSION = "0.1.3"
 
 from datetime import datetime
 import inspect
 import os
+from typing import Union
 
 class LOG_LEVELS:
-    # Not implemented and undocumented
+    # Undocumented
     ALL = -32768
     DEBUG = -1
     INFO = 0
     WARNING = 1
     ERROR = 2
     CRITICAL = 3
-    def get_name(level):
+    def get_name(level:int) -> str:
         match level:
             case LOG_LEVELS.DEBUG:
                 return "debug"
@@ -30,7 +31,7 @@ class LOG_LEVELS:
             case _:
                 error("No such log type that matches the given level.")
                 return "[UNDEFINED]"
-    def get_level(name):
+    def get_level(name:str) -> int:
         match name.lower():
             case "debug":
                 return LOG_LEVELS.DEBUG
@@ -45,13 +46,16 @@ class LOG_LEVELS:
             case _: 
                 error("No such log type with the given type name.")
                 return "[UNDEFINED]"
-    def get_if_level_prints(level_name):
+    def get_if_level_prints(level:Union[str, int]) -> bool:
         global LOG_LEVEL
-        level = LOG_LEVELS.get_level(level_name)
+        if type(level) == str:
+            level = LOG_LEVELS.get_level(level)
+            if level.upper() == "[UNDEFINED]":
+                return True
         min_level = LOG_LEVELS.get_level(LOG_LEVEL)
         return level >= min_level
 
-def init_log_file(file_dir="./logs/"):
+def init_log_file(file_dir:str="./logs/") -> str:
     global CURR_LOG_FILE
     if file_dir in [None, "", 0, False]:
         file_dir = "./logs/"
@@ -65,16 +69,18 @@ def init_log_file(file_dir="./logs/"):
     f = open(CURR_LOG_FILE, "w", encoding="utf-8")
     f.write("")
     f.close()
+    return file_dir
 
-def write_string(string):
+def write_string(string:str) -> None:
     global CURR_LOG_FILE
     if CURR_LOG_FILE.upper() == "[UNDEFINED]":
         init_log_file(file_dir=("./logs/tests/log/" if __name__ == "__main__" else None))
     f = open(CURR_LOG_FILE, "a", encoding="utf-8")
     f.write(str(string)+"\n")
     f.close()
+    return
 
-def log(level, msg, tracelevel=1, console_silent=None, silent=False):
+def log(level:Union[int, str], msg:str, tracelevel:int=1, console_silent:Union[bool, None]=None, silent:bool=False) -> str:
     if type(level) == str:
             if not level.lower() in ["debug", "info", "warning", "error", "critical"]:
                 error("Invalid log type!")
@@ -97,21 +103,22 @@ def log(level, msg, tracelevel=1, console_silent=None, silent=False):
     if LOG_LEVELS.get_level(level) >= LOG_LEVELS.WARNING:
         if globals()[f"ON_{level.upper()}_LOGGED"] != None and (not silent):
             globals()[f"ON_{level.upper()}_LOGGED"](msg)
+    return log_str
 
-def debug(msg, console_silent=None):
-    log("debug", msg, console_silent=console_silent, tracelevel=2)
+def debug(msg:str, console_silent:Union[bool, None]=None) -> str:
+    return log("debug", msg, console_silent=console_silent, tracelevel=2)
 
-def info(msg, console_silent=None):
-    log("info", msg, console_silent=console_silent, tracelevel=2)
+def info(msg:str, console_silent:Union[bool, None]=None) -> str:
+    return log("info", msg, console_silent=console_silent, tracelevel=2)
 
-def warn(msg, silent=False, console_silent=None):
-    log("warning", msg, console_silent=console_silent, silent=silent, tracelevel=2)
+def warn(msg:str, silent:bool=False, console_silent:Union[bool, None]=None) -> str:
+    return log("warning", msg, console_silent=console_silent, silent=silent, tracelevel=2)
 
-def error(msg, silent=False, console_silent=None):
-    log("error", msg, console_silent=console_silent, silent=silent, tracelevel=2)
+def error(msg:str, silent:bool=False, console_silent:Union[bool, None]=None) -> str:
+    return log("error", msg, console_silent=console_silent, silent=silent, tracelevel=2)
 
-def critical(msg, silent=False, console_silent=None):
-    log("critical", msg, console_silent=console_silent, silent=silent, tracelevel=2)
+def critical(msg:str, silent:bool=False, console_silent:Union[bool, None]=None) -> str:
+    return log("critical", msg, console_silent=console_silent, silent=silent, tracelevel=2)
 
 def _test_log(): #This function is only for testing purposes, and will be UNDOCUMENTED. DO NOT USE IT IN YOUR OWN CASE!
     write_string("write_string() succeed.")
