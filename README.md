@@ -5,7 +5,7 @@ A light logging module for Python softwares.
 
 ## ✨ Features
 ### Formatting
-Each message are automatically formatted when logged. Time, tracing info and type will be automatically added to your logs.
+Each message is automatically formatted when logged. Time, tracing info and type will be automatically added to your logs.
 
 ### Simple
 Minimalogger is a really simple way to store and output logs. It only provides basic but enough functions for logging.
