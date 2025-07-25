@@ -9,53 +9,33 @@ import os
 from typing import Union
 
 class LOG_LEVELS:
-    # Undocumented
-    ALL = -32768
-    DEBUG = -1
-    INFO = 0
-    WARNING = 1
-    ERROR = 2
-    CRITICAL = 3
+    """Stores log levels and ways to convert them between levels and names."""
+    ALL = -1
+    LIST = ["debug", "info", "warning", "error", "critical"]
     def get_name(level:int) -> str:
-        match level:
-            case LOG_LEVELS.DEBUG:
-                return "debug"
-            case LOG_LEVELS.INFO:
-                return "info"
-            case LOG_LEVELS.WARNING:
-                return "warning"
-            case LOG_LEVELS.ERROR:
-                return "errors"
-            case LOG_LEVELS.CRITICAL:
-                return "critical"
-            case _:
-                error("No such log type that matches the given level.")
-                return "[UNDEFINED]"
+        """Get the name of the log level with given level number. `[undefined]` if the level does not exist."""
+        if level < 0 or level > len(LOG_LEVELS.LIST) - 1:
+            log("error", "No such log type that matches the given level.")
+            return "[UNDEFINED]"
+        return LOG_LEVELS.LIST[level]
     def get_level(name:str) -> int:
-        match name.lower():
-            case "debug":
-                return LOG_LEVELS.DEBUG
-            case "info":
-                return LOG_LEVELS.INFO
-            case "warning":
-                return LOG_LEVELS.WARNING
-            case "error":
-                return LOG_LEVELS.ERROR
-            case "critical":
-                return LOG_LEVELS.CRITICAL
-            case _: 
-                error("No such log type with the given type name.")
-                return "[UNDEFINED]"
+        """Get the level number of the log level with given name. `[undefined]` if the level does not exist."""
+        if name not in LOG_LEVELS.LIST:
+            log("error", "No such log type with the given type name.")
+            return "[UNDEFINED]"
+        return LOG_LEVELS.LIST.index(name)
     def get_if_level_prints(level:Union[str, int]) -> bool:
+        """Get whether the logs at a given level will be printed out or not."""
         global LOG_LEVEL
         if type(level) == str:
             level = LOG_LEVELS.get_level(level)
-            if level.upper() == "[UNDEFINED]":
+            if type(level) == str:
                 return True
         min_level = LOG_LEVELS.get_level(LOG_LEVEL)
         return level >= min_level
 
 def init_log_file(file_dir:str="./logs/") -> str:
+    """Initialize a log file under a given directory, returns the path to the log file."""
     global CURR_LOG_FILE
     if file_dir in [None, "", 0, False]:
         file_dir = "./logs/"
@@ -72,6 +52,7 @@ def init_log_file(file_dir:str="./logs/") -> str:
     return file_dir
 
 def write_string(string:str) -> None:
+    """Write a string to log file."""
     global CURR_LOG_FILE
     if CURR_LOG_FILE.upper() == "[UNDEFINED]":
         init_log_file(file_dir=("./logs/tests/log/" if __name__ == "__main__" else None))
@@ -81,14 +62,15 @@ def write_string(string:str) -> None:
     return
 
 def log(level:Union[int, str], msg:str, tracelevel:int=1, console_silent:Union[bool, None]=None, silent:bool=False) -> str:
+    """Write a log to console and log file, returns the formatted log string."""
     if type(level) == str:
             if not level.lower() in ["debug", "info", "warning", "error", "critical"]:
-                error("Invalid log type!")
+                log("error", "Invalid log type!")
                 return
     else:
         level = LOG_LEVELS.get_name(level)
         if level == "[UNDEFINED]":
-            error("Invalid log type!")
+            log("error", "Invalid log type!")
             return
     if console_silent == None:
         console_silent = not LOG_LEVELS.get_if_level_prints(level)
@@ -100,42 +82,40 @@ def log(level:Union[int, str], msg:str, tracelevel:int=1, console_silent:Union[b
     if not console_silent:
         print(log_str)
     write_string(log_str)
-    if LOG_LEVELS.get_level(level) >= LOG_LEVELS.WARNING:
-        if globals()[f"ON_{level.upper()}_LOGGED"] != None and (not silent):
-            globals()[f"ON_{level.upper()}_LOGGED"](msg)
+    if ON_LOGGED[level] != None and (not silent):
+        ON_LOGGED[level](msg)
     return log_str
 
-def debug(msg:str, console_silent:Union[bool, None]=None) -> str:
-    return log("debug", msg, console_silent=console_silent, tracelevel=2)
+def create_quick_log_functions(log_types:list = LOG_LEVELS.LIST) -> None:
+    """Creates quick log functions. Will be done automatically while the log module initializes."""
+    for log_type in log_types:
+        if log_type in globals():
+            log("error", f"Quick log function log.{log_type}() has already existed as another function or variable! " + \
+                "The quick log function for this log type will not work.")
+            continue
+        globals()[log_type] = lambda msg, silent=False, console_silent=not LOG_LEVELS.get_if_level_prints(log_type), \
+            level=log_type: log(level, msg, silent=silent, console_silent=console_silent, tracelevel=2)
 
-def info(msg:str, console_silent:Union[bool, None]=None) -> str:
-    return log("info", msg, console_silent=console_silent, tracelevel=2)
-
-def warn(msg:str, silent:bool=False, console_silent:Union[bool, None]=None) -> str:
-    return log("warning", msg, console_silent=console_silent, silent=silent, tracelevel=2)
-
-def error(msg:str, silent:bool=False, console_silent:Union[bool, None]=None) -> str:
-    return log("error", msg, console_silent=console_silent, silent=silent, tracelevel=2)
-
-def critical(msg:str, silent:bool=False, console_silent:Union[bool, None]=None) -> str:
-    return log("critical", msg, console_silent=console_silent, silent=silent, tracelevel=2)
-
-def _test_log(): #This function is only for testing purposes, and will be UNDOCUMENTED. DO NOT USE IT IN YOUR OWN CASE!
+def _test_log() -> None:
+    """This function is only for testing purposes, and will be UNDOCUMENTED. DO NOT USE IT IN YOUR OWN CASE!"""
     write_string("write_string() succeed.")
-    debug("Successfully logged an debug message.")
-    info("Successfully logged an info message.")
-    warn("Successfully logged an warning message.")
-    error("Successfully logged an error message.")
-    critical("Successfully logged an critical message.")
+    log("debug", "Successfully logged an debug message.")
+    log("info", "Successfully logged an info message.")
+    log("warning", "Successfully logged an warning message.")
+    log("error", "Successfully logged an error message.")
+    log("critical", "Successfully logged an critical message.")
+    info("Successfully logged an info message with quick log function.")
     return True
 
 CURR_LOG_FILE = "[UNDEFINED]"
 LOG_LEVEL = "info"
-ON_ERROR_LOGGED = lambda log: None
-ON_WARNING_LOGGED = lambda log: None
-ON_CRITICAL_LOGGED = lambda log: None
+ON_LOGGED = {}
+for level_name in LOG_LEVELS.LIST:
+    ON_LOGGED[level_name] = lambda log: None
 
-info(f"Welcome from Minimalogger v{_VERSION}")
+create_quick_log_functions()
+
+log("info", f"Welcome from Minimalogger v{_VERSION} (Log initialized now)")
 
 if __name__ == "__main__":
     # Prepare tkinter to show dialogs.
@@ -145,9 +125,9 @@ if __name__ == "__main__":
     window.withdraw()
     window.update()
     # Bind things to do when error and warnings are logged.
-    ON_WARNING_LOGGED = lambda msg: msgbox.showwarning("Warning triggered by ON_WARNING_LOGGED", msg)
-    ON_ERROR_LOGGED = lambda msg: msgbox.showerror("Error triggered by ON_ERROR_LOGGED", msg)
-    ON_CRITICAL_LOGGED = lambda msg: msgbox.showerror("Warning triggered by ON_CRITICAL_LOGGED", msg)
+    ON_LOGGED["warning"] = lambda msg: msgbox.showwarning("Warning triggered by ON_WARNING_LOGGED", msg)
+    ON_LOGGED["error"] = lambda msg: msgbox.showerror("Error triggered by ON_ERROR_LOGGED", msg)
+    ON_LOGGED["critical"] = lambda msg: msgbox.showerror("Warning triggered by ON_CRITICAL_LOGGED", msg)
     # Run tests
     test_result = _test_log()
     if test_result:
