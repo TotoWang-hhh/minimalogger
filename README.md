@@ -27,32 +27,24 @@ By default, the logging module automatically creates log file under `./logs/`, a
 To Cusomize the path of the log files, use `log.init_log_file(file_dir="<Directory to store the log files>")`. Then the logging module will automatically generate an empty new log file under the given directory, with the time created as the file name.
 
 ### Log Something
-Then you may want to add something to the log. Currently we have 5 types of log available, which are:
+Then you may want to add something to the log. Currently we have 5 types of log available by default, which are:
 - 🐞 Debug
 - ℹ️ Info
 - ⚠️ Warning
 - ❌ Error
 - 🛑 Critical
 
-#### Debug
-Debug is a type of log which doesn't trigger and output anything by default, bug actually adds a log to the log file. This is for some detailed debug info. To add a debug log, use `log.debug(<Some text>)`.
+With the new features added in recent updates, you can now add your own log level. As these operations are not tested and not stable, they will not be documented for now.
 
-#### Info
-Info is a type of log which would be outputted and be written into the log file by default. This is for some normal information which is not too detailed and not too much to show, and doesn't contain any abnormal information. To add an info log, use `log.info("<Some text>")`.
+Each of the log types will trigger function stored in `ON_LOGGED["<The name of the log type>"]`. If the log type has a level higher than the value set in `LOG_LEVEL`, it will be printed out. All logs will be written to log files.
 
-#### Warning
-Warning is a type of log which would trigger the function stored in `ON_WARNING_LOGGED` varriable, then be outputted to the console and be stored in the log file by default. This is for some warning messages which is not important enough to stop the program running normally. To add an warning log, use `log.warn("<Some text>")`.
+#### Quick Log Functions
+Starting from v0.1.3, these functions are created dynamically during the initialization of the log module. For each type of log, use `log.<Name of the log type>("<Your message>")` to log something. For instance, `log.info("Hello world")` for a hello world info message.
 
-#### Error
-Error is a type of log which would trigger the function stored in `ON_ERROR_LOGGED` varriable, then be outputted to the console and be stored in the log file by default. This is for some unrecoverable or unignorable errors that stops the part of the program running normally. To add an error log, use `log.error("<Some text>")`.
-
-#### Critical
-Critical is a type of log which would trigger the function stored in `ON_CRITICAL_LOGGED` varriable, whne be outputted to the console and be stored in the log file by default. This is for some unnrecoverable and critical errors which makes the whole program stop working or run into panic. To add a critical log, use `log.critical("<Some text>")`.
-
-### Popup Your Errors (Optional)
+### Popup or Report Your Errors (Optional)
 As I mentioned before, warning, error, and critical logs will trigger the given functions when they are logged. By default, these functions binded to the logs Just simply returns None, but it can be set to anything.
 
-These options are for showing your errors in UI, maybe in a popup or notification. You can simply modify the binded function by changing the value of `log.ON_XXX_LOGGED` varriables. Function stored in the varriables should require one or additional arguments to run. This is because the logging module will give your log message to the function by the first argument.
+These options are for showing your errors in UI, maybe in a popup or notification. You can simply modify the binded function by changing the value of `log.ON_LOGGED` dictionary, e.g. `log.ON_LOGGED["error"] = lambda message: some_function(message)`. Function stored in the varriables should require one or additional arguments to run. This is because the logging module will give your log message to the function by the first argument.
 
 For example, if I want to use tkinter.messagebox to show errors in my program, I should do: `log.ON_ERROR_LOGGED = lambda message: tkinter.messagebox.showerror("Error", message)`.
 
