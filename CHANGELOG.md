@@ -3,7 +3,10 @@
 ## v0.1.4
 ### Added
 - Workarounds for IDEs of quick logging functions (auto generation of a .pyi file).
-- Clearer code comments
+- Clearer code comments.
+
+### Changed
+- Improved typing of minimalogger's internal code.
 
 ### Removed
 - Testing functions.
