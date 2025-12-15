@@ -44,7 +44,7 @@ Starting from v0.1.3, these functions are created dynamically during the initial
 ##### IDE Workarounds for Quick Log Functions
 The quick log functions are usually automatically dynamically generated at runtime during module initialization. Starting from v0.1.4, the logging module will create a `.pyi` file to make functions like highlights, type hints, auto-completion... to work correctly. **Due to the mechanisms behind this feature, the logging module needs to be run once (either by running directly or being imported by other programs) everytime you change the list of log levels, to make your code looks right in IDE.**
 
-In a more technically precise way: `Changing the list of log levels > Run the logging module once > A .pyi file generated > IDE use the .pyi file for highlights > Following IDE highlights works correctly`
+In a more technically precise way: `Changing the list of log levels > Run the logging module once > A .pyi file generated > IDE uses the .pyi file for highlighting > Following IDE highlights works correctly`
 
 ### Popup or Report Your Errors (Optional)
 As I mentioned before, warning, error, and critical logs will trigger the given functions when they are logged. By default, these functions binded to the logs Just simply returns None, but it can be set to anything.
