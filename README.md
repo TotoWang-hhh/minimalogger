@@ -1,7 +1,7 @@
 # 📜 Minimalogger
 A light logging module for Python softwares.
 
-**2024 By rgzz666** | version: v0.1.3
+**2024 By rgzz666** | version: v0.1.4
 
 ## ✨ Features
 ### Formatting
