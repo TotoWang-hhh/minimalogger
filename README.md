@@ -27,16 +27,29 @@ By default, the logging module automatically creates log file under `./logs/`, a
 To Cusomize the path of the log files, use `log.init_log_file(file_dir="<Directory to store the log files>")`. Then the logging module will automatically generate an empty new log file under the given directory, with the time created as the file name.
 
 ### Log Something
-Then you may want to add something to the log. Currently we have 5 types of log available by default, which are:
+Then you may want to add something to the log. By default, 5 log levels / types are available, which are:
 - 🐞 Debug
 - ℹ️ Info
 - ⚠️ Warning
 - ❌ Error
 - 🛑 Critical
 
-With the new features added in recent updates, you can now add your own log level. As these operations are not tested and not stable, they will not be documented for now.
+#### Customizing Log Levels
+With the new features added in v0.1.3, you can now customize the log levels.
 
-Each of the log types will trigger function stored in `ON_LOGGED["<Name of the log type>"]`. If the log type has a level higher than the value set in `LOG_LEVEL`, it will be printed out. All logs will be written to log files.
+To edit it, change content of `LOG_LEVELS.LIST`. Each log level has a name and a level number. The names are stored in order of priority (low to high, and has a level number same as the index of their names in the list.
+
+Currently, it is not suggested to change log levels during runtime, as this has not been tested yet. However, this is not disallowed, so you may still try it at your own risk.
+
+#### Binding Events to Logs
+Each of the log types will trigger function stored in `ON_LOGGED["<Name of the log type>"]`.
+
+This allows a certain function or lambda expression be triggered when a certain type of log is logged (log is logged... hmm🤔).
+
+See the [Popup or Report Your Errors](#Popup or Report Your Errors (Optional)) section for more.
+
+#### Keeping Silent
+If the log type has a level higher than the value set in `LOG_LEVEL`, it will be printed out. All logs will be written to log files.
 
 #### Quick Log Functions
 Starting from v0.1.3, these functions are created dynamically during the initialization of the log module. For each type of log, use `log.<Name of the log type>("<Your message>")` to log something. For instance, `log.info("Hello world")` for a hello world info message.
@@ -47,11 +60,18 @@ The quick log functions are usually automatically dynamically generated at runti
 In a more technically precise way: `Changing the list of log levels > Run the logging module once > A .pyi file generated > IDE uses the .pyi file for highlighting > Following IDE highlights works correctly`
 
 ### Popup or Report Your Errors (Optional)
-As I mentioned before, warning, error, and critical logs will trigger the given functions when they are logged. By default, these functions binded to the logs Just simply returns None, but it can be set to anything.
+As mentioned before, logs can trigger some certain functions when they are logged. By default, these functions binded to the logs simply returns None, but it can be set to anything.
 
 These options are for showing your errors in UI, maybe in a popup or notification. You can simply modify the binded function by changing the value of `log.ON_LOGGED` dictionary, e.g. `log.ON_LOGGED["error"] = lambda message: some_function(message)`. Function stored in the varriables should require one or additional arguments to run. This is because the logging module will give your log message to the function by the first argument.
 
-For example, if I want to use tkinter.messagebox to show errors in my program, I should do: `log.ON_LOGGED["error"] = lambda message: tkinter.messagebox.showerror("Error", message)`.
+For example, the following code shows how to use `tkinter.messagebox` to popup errors in an actual program:
+```python
+log.ON_LOGGED["error"] = \
+    lambda message: \
+        tkinter.messagebox.showerror("Error", message)
+```
+
+After setting these values, all new log after this point will immediately take effect.
 
 ## 🧪 Testing
-Hey! Are you running this module directly? This should trigger the things under `if __name__ == "__main__":`, which is for testing purposes. These code will test every single function of this module, but may produce addtional files you may don't need. The `_test_log()` function is also a part of the testing function. You should not use `_test_log()` in your own code.
+Since version v0.1.4, built-in testing contents are removed. For older versions of this module, you may read older versions of the document. The matching version of a document can be found right below the top heading.
