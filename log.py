@@ -18,7 +18,10 @@ class LOG_LEVELS:
     def get_name(
         level:int
         ) -> str:
-        """Get the name of the log level with given level number. `[undefined]` if the level does not exist."""
+        """Get the name of the log level with given level number. 
+        
+        `[undefined]` if the level does not exist.
+        """
         if level < 0 or level > len(LOG_LEVELS.LIST) - 1:
             log("error", "No such log type that matches the given level.")
             return "[UNDEFINED]"
@@ -28,7 +31,10 @@ class LOG_LEVELS:
     def get_level(
         name:str
         ) -> int:
-        """Get the level number of the log level with given name. `[undefined]` if the level does not exist."""
+        """Get the level number of the log level with given name. 
+        
+        -1 if the level does not exist.
+        """
         if name not in LOG_LEVELS.LIST:
             log("error", "No such log type with the given type name.")
             return -1
@@ -89,6 +95,8 @@ def log(
         silent: bool=False
         ) -> str:
     """Write a log to console and log file, returns the formatted log string."""
+    ## Formation of log message
+    # Log type
     if type(level) is str:
             if not level.lower() in LOG_LEVELS.LIST:
                 log("error", "Invalid log type!")
@@ -103,12 +111,17 @@ def log(
     assert type(level) is str
     if console_silent == None:
         console_silent = not LOG_LEVELS.get_if_level_prints(level)
-    source = f"{os.path.split(inspect.stack()[tracelevel][1])[1]} > " # File path
+    # Tracing info
+    source = "" # Tracking info to the source of this log
+    source += f"{os.path.split(inspect.stack()[tracelevel][1])[1]} > " # File path
     source += inspect.stack()[tracelevel][3] + '()' if \
               str(inspect.stack()[tracelevel][3]) != '<module>' else 'ROOT' + " > " # Module
     source += f"Line {inspect.stack()[tracelevel][2]}" # Line no.
+    # Time info
     time_str = str(datetime.now())
+    # Message part
     log_str = f"{time_str} [{level.upper()}] [{source}]: {msg}"
+    ## Handle the log (console stuff, write file line, bound functions, etc.)
     if not console_silent:
         print(log_str)
     write_string(log_str)
@@ -120,18 +133,24 @@ def create_quick_log_functions(
         log_types: list = LOG_LEVELS.LIST
         ) -> None:
     """Creates quick log functions. Will be done automatically while the log module initializes."""
+    pyi_f = open("log.pyi", "w", encoding="utf-8") # Open the pyi file for re-generation
     for log_type in log_types:
         if log_type in globals():
+            # If function name already occupied
             log("error", f"Quick log function log.{log_type}() has already existed as another "
                 "function or variable! The quick log function for this log type will not work.")
             continue
         globals()[log_type] = lambda msg, silent=False, \
             console_silent=not LOG_LEVELS.get_if_level_prints(log_type), \
             level=log_type: \
-                log(level, msg, silent=silent, console_silent=console_silent, tracelevel=2)
+                log(level, msg, silent=silent, console_silent=console_silent, 
+                    tracelevel=2) # Make the function
+        pyi_f.write(
+            f"def {log_type}(msg: str, silent: bool = False) -> None: ...\n") # Write to .pyi file
+    pyi_f.close() # Close file
 
 CURR_LOG_FILE = "[UNDEFINED]"
-LOG_LEVEL = "info"
+LOG_LEVEL = "info" # Log lower than this level will be silent
 ON_LOGGED = {}
 for level_name in LOG_LEVELS.LIST:
     ON_LOGGED[level_name] = lambda log: None
@@ -139,16 +158,6 @@ for level_name in LOG_LEVELS.LIST:
 create_quick_log_functions()
 
 log("info", f"Welcome from Minimalogger v{_VERSION} (Log initialized now)") # Initial welcome info
-
-with open("log.pyi", "w", encoding="utf-8") as f:
-    for level in LOG_LEVELS.LIST:
-        f.write(
-            f"def {level}(msg: str, silent: bool = False) -> None: ...\n"
-        )
-
-if typing.TYPE_CHECKING: # If is type checking, then create quick log functions anyway
-    for level_name in LOG_LEVELS.LIST:
-        globals()[level_name] = typing.Callable[[str, bool], None]
 
 if __name__ == "__main__":
     log("info", f"Welcome to minimalogger! You may include this module in your big deal.")
