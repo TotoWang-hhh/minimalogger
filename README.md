@@ -46,7 +46,7 @@ Each of the log types will trigger function stored in `ON_LOGGED["<Name of the l
 
 This allows a certain function or lambda expression be triggered when a certain type of log is logged (log is logged... hmm🤔).
 
-See the [Popup or Report Your Errors](#Popup or Report Your Errors (Optional)) section for more.
+See the [Popup or Report Your Errors](#popup-or-report-your-errors-optional) section for more.
 
 #### Keeping Silent
 If the log type has a level higher than the value set in `LOG_LEVEL`, it will be printed out. All logs will be written to log files.
