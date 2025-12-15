@@ -1,9 +1,17 @@
 # Changelog
 
+## v0.1.4
+### Added
+- Workarounds for IDEs of quick logging functions (auto generation of a .pyi file).
+- Clearer code comments
+
+### Removed
+- Testing functions.
+
 ## v0.1.3
 ### Added
 - Added explanation for functions and classes.
-- Added the support to dynamically add quick log functions, such as info(), warning(), etc. These functions will be created dynamically afterwards.
+- Added the support to dynamically add quick log functions, such as info(), warning(), etc. These functions will be created dynamically. afterwards.
 - Added typing info.
 - Log level setting support, which allows users to set a level and make logs below it silent.
 
