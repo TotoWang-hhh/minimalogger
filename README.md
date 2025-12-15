@@ -41,6 +41,9 @@ Each of the log types will trigger function stored in `ON_LOGGED["<Name of the l
 #### Quick Log Functions
 Starting from v0.1.3, these functions are created dynamically during the initialization of the log module. For each type of log, use `log.<Name of the log type>("<Your message>")` to log something. For instance, `log.info("Hello world")` for a hello world info message.
 
+##### IDE Workarounds for Quick Log Functions
+The quick log functions are usually automatically dynamically generated while the module running. Starting from v0.1.4, the logging module will create a `.pyi` file to make functions like highlights, type hints, auto-completion... to work correctly. **Due to the mechanisms behind this feature, the logging module needs to be ran once everytime you change the list of log levels, to make you code looks right in IDE.**
+
 ### Popup or Report Your Errors (Optional)
 As I mentioned before, warning, error, and critical logs will trigger the given functions when they are logged. By default, these functions binded to the logs Just simply returns None, but it can be set to anything.
 
