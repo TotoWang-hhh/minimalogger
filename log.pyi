@@ -1,7 +1,7 @@
-# This is a default pyi file for quick log functions. This file if for hilighting, auto-completion 
-# and typing in IDEs. This default version is suitable for default list of log levels. Running the 
-# module will override current contents in this file with a dynamically generated version based on 
-# the actual log levels list.
+# This is a default pyi file for quick log functions. This file is for highlighting, 
+# auto-completion and typing functions in IDEs. This default version is suitable for default list 
+# of log levels. Running the module will override current contents in this file with a 
+# dynamically generated version based on the actual log levels list.
 
 def debug(msg: str, silent: bool = False) -> None: ...
 def info(msg: str, silent: bool = False) -> None: ...
